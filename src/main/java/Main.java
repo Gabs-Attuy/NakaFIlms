@@ -15,6 +15,7 @@ public class Main {
     private Tela_de_inicio telaInicio;
     private Tela_login telaLogin;
     private Tela_cadastro_usuario telaCadastro;
+    private Tela_principal telaPrincipal;
 
     public static CardLayout getCardLayout() {
         return cardLayout;
@@ -47,7 +48,7 @@ public class Main {
                         id = Id_casoLogin.getUserId(Tela_login.getUserText().getText(), Tela_login.getSenhaText().getText());
                         if(id != -1){
                             JOptionPane.showMessageDialog(null, "Bem-vindo!");
-                            //cardLayout.show(cards, "menu_pricipal");
+                            cardLayout.show(cards, "menu_principal");
                         } else {
                             JOptionPane.showMessageDialog(null, "Usuário não encontrado!");
                         }
@@ -73,11 +74,17 @@ public class Main {
                 }
             }
         });
+        telaPrincipal = new Tela_principal(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
+            }
+        });
         // Adicionando as telas ao CardLayout
         cards.add(telaInicio, "inicio");
         cards.add(telaLogin, "login");
         cards.add(telaCadastro, "cadastro");
+        cards.add(telaPrincipal, "menu_principal");
 
         frame.add(cards);
         frame.setVisible(true);

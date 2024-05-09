@@ -40,12 +40,4 @@ public class Tela_de_inicio extends JPanel{
         cadastroButton.addActionListener(listener);
         add(cadastroButton, gbc);
     }
-
-//    @Override
-//    public void actionPerformed(ActionEvent e){
-//        if (e.getSource() == loginButton)
-//            cardLayout.show(getParent(), "login");
-//        if (e.getSource() == cadastroButton)
-//            cardLayout.show(getParent(), "cadastro");
-//    }
 }

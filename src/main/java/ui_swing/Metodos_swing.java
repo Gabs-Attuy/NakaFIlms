@@ -16,6 +16,13 @@ public class Metodos_swing {
         return botao;
     }
 
+    public static JButton cria_botao_header(String texto){
+        JButton botao = new JButton(texto);
+        botao.setBackground(Color.decode("#0D1E40"));
+        botao.setForeground(Color.decode("#F21B7F"));
+        botao.setPreferredSize(new Dimension(295, 56));
+        return botao;
+    }
 }
 //labelUsuario = new JLabel("Usuário:");
 //labelSenha = new JLabel("Senha:");
