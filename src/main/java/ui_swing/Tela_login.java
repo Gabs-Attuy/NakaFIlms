@@ -111,6 +111,7 @@ public class Tela_login extends JPanel /*implements ActionListener*/{
         // Adicionando o botão
         gbc.gridy = 2;
         entrarButton = Metodos_swing.cria_botao("Entrar");
+        entrarButton.addActionListener(listener);
         add(entrarButton, gbc);
     }
 }

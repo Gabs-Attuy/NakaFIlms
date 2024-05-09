@@ -1,11 +1,13 @@
 import Entities.Usuario;
 import sql_actions.Cad_usuario;
+import sql_actions.Id_casoLogin;
 import ui_swing.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
 public class Main {
+    private int id;
     private JFrame frame;
     private JPanel cards;
     private static CardLayout cardLayout;
@@ -41,10 +43,14 @@ public class Main {
         telaLogin = new Tela_login(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == Tela_login.getEntrarButton()) {
-
                     try {
-                        Cad_usuario.Cad_user(u);
-                        cardLayout.show(cards, "login");
+                        id = Id_casoLogin.getUserId(Tela_login.getUserText().getText(), Tela_login.getSenhaText().getText());
+                        if(id != -1){
+                            JOptionPane.showMessageDialog(null, "Bem-vindo!");
+                            //cardLayout.show(cards, "menu_pricipal");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Usuário não encontrado!");
+                        }
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
