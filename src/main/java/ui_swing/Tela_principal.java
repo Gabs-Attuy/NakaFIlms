@@ -3,10 +3,12 @@ package ui_swing;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.DateFormat;
+import java.util.Date;
 
 public class Tela_principal extends JPanel implements ActionListener {
     private static JButton nakabank, home;
-
+    private static JLabel lbldata;
     public static JButton getNakabank() {
         return nakabank;
     }
@@ -16,6 +18,7 @@ public class Tela_principal extends JPanel implements ActionListener {
     }
 
     public Tela_principal(ActionListener listener) {
+
         setBackground(Color.decode("#0D1E40"));
         setLayout(new BorderLayout()); // Usar BorderLayout para colocar o painel no topo
 
@@ -47,11 +50,26 @@ public class Tela_principal extends JPanel implements ActionListener {
         JLabel imageUsuario = new JLabel(usuario);
         header.add(imageUsuario);
 
-        // Adicionar o painel de cabeçalho ao BorderLayout na parte superior
+        // Adiciona o painel de cabeçalho ao BorderLayout na parte superior
         add(header, BorderLayout.NORTH);
 
+        JPanel footer = new JPanel(new FlowLayout());
+        footer.setOpaque(true);
+        footer.setBackground(Color.decode("#F2F0C9"));
+        JLabel data = new JLabel();
+        mostrarData(data);
+        data.setForeground(Color.decode("#F21B7F"));
+        footer.add(data);
+
+        // Adiciona o painel de rodapé ao BorderLayout na parte inferior
+        add(footer, BorderLayout.SOUTH);
     }
 
+    public static void mostrarData(JLabel lbldata){
+        Date data = new Date();
+        DateFormat formatador = DateFormat.getDateInstance(DateFormat.FULL);
+        lbldata.setText(formatador.format(data));
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
 

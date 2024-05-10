@@ -1,7 +1,36 @@
 package Entities;
 
+import java.io.FileInputStream;
+import java.sql.Blob;
+
 public class Filme {
-    private String nome, duracao, elenco, diretor, genero, distribuidora, classificacao;
+    private String nome, duracao, elenco, diretor, genero, distribuidora, classificacao, sinopse;
+    private FileInputStream fis;
+    private int tamanho;
+
+    public FileInputStream getFis() {
+        return fis;
+    }
+
+    public void setFis(FileInputStream fis) {
+        this.fis = fis;
+    }
+
+    public int getTamanho() {
+        return tamanho;
+    }
+
+    public void setTamanho(int tamanho) {
+        this.tamanho = tamanho;
+    }
+
+    public String getSinopse() {
+        return sinopse;
+    }
+
+    public void setSinopse(String sinopse) {
+        this.sinopse = sinopse;
+    }
 
     public String getNome() {
         return nome;
@@ -59,7 +88,7 @@ public class Filme {
         this.classificacao = classificacao;
     }
 
-    public Filme(String nome, String duracao, String elenco, String diretor, String genero, String distribuidora, String classificacao) {
+    public Filme(String nome, String duracao, String elenco, String diretor, String genero, String distribuidora, String classificacao, String sinopse, FileInputStream fis, int tamanho) {
         this.nome = nome;
         this.duracao = duracao;
         this.elenco = elenco;
@@ -67,5 +96,8 @@ public class Filme {
         this.genero = genero;
         this.distribuidora = distribuidora;
         this.classificacao = classificacao;
+        this.sinopse = sinopse;
+        this.fis = fis;
+        this.tamanho = tamanho;
     }
 }

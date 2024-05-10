@@ -1,12 +1,16 @@
-import Entities.Usuario;
-import sql_actions.Cad_usuario;
-import sql_actions.Id_casoLogin;
+import Entities.*;
+import sql_actions.*;
 import ui_swing.*;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.FileInputStream;
 
-public class Main {
+public class Main extends Component {
+
     private int id;
     private JFrame frame;
     private JPanel cards;
@@ -16,6 +20,7 @@ public class Main {
     private Tela_login telaLogin;
     private Tela_cadastro_usuario telaCadastro;
     private Tela_principal telaPrincipal;
+    private Tela_cadastro_filme telaCadFilme;
 
     public static CardLayout getCardLayout() {
         return cardLayout;
@@ -77,7 +82,34 @@ public class Main {
         telaPrincipal = new Tela_principal(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                if(e.getSource() == Tela_principal.getHome()){
+                    cardLayout.show(cards, "cad_filme");
+                }
+            }
+        });
+        telaCadFilme = new Tela_cadastro_filme(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(e.getSource() == Tela_cadastro_filme.getProcuraFoto()) {
+                    carregarFoto();
+                } else if (e.getSource() == Tela_cadastro_filme.getCadastrarButton()) {
+                    Filme f = new Filme(Tela_cadastro_filme.getNomeText().getText(),
+                            Tela_cadastro_filme.getDuracaoText().getText(),
+                            Tela_cadastro_filme.getElencoText().getText(),
+                            Tela_cadastro_filme.getDiretorText().getText(),
+                            Tela_cadastro_filme.getGeneroText().getText(),
+                            Tela_cadastro_filme.getDistribuidoraText().getText(),
+                            Tela_cadastro_filme.getClassificacaoText().getText(),
+                            Tela_cadastro_filme.getSinopseText().getText(),
+                            Tela_cadastro_filme.getFis(),
+                            Tela_cadastro_filme.getTamanho());
+                    try {
+                        Cad_filme.Cad_filmes(f);
+                        cardLayout.show(cards, "menu_principal");
+                    } catch (Exception er){
+                        er.printStackTrace();
+                    }
+                }
             }
         });
         // Adicionando as telas ao CardLayout
@@ -85,9 +117,27 @@ public class Main {
         cards.add(telaLogin, "login");
         cards.add(telaCadastro, "cadastro");
         cards.add(telaPrincipal, "menu_principal");
-
+        cards.add(telaCadFilme, "cad_filme");
         frame.add(cards);
         frame.setVisible(true);
+    }
+
+    public void carregarFoto(){
+        JFileChooser jfc = new JFileChooser();
+        jfc.setDialogTitle("Selecionar Imagem do Cartaz");
+        jfc.setFileFilter(new FileNameExtensionFilter("Arquivo de imagens (*.PNG, *.JPG, *.JPEG)", "png", "jpg", "jpeg"));
+        int resultado = jfc.showSaveDialog(this);
+        if(resultado == JFileChooser.APPROVE_OPTION){
+            try{
+                Tela_cadastro_filme.fis = new FileInputStream(jfc.getSelectedFile());
+                Tela_cadastro_filme.tamanho = (int) jfc.getSelectedFile().length();
+                Image foto = ImageIO.read(jfc.getSelectedFile()).getScaledInstance(Tela_cadastro_filme.getLblCartaz().getWidth(), Tela_cadastro_filme.getLblCartaz().getHeight(), Image.SCALE_SMOOTH);
+                Tela_cadastro_filme.getLblCartaz().setIcon(new ImageIcon(foto));
+                Tela_cadastro_filme.getLblCartaz().updateUI();
+            } catch (Exception e){
+                System.out.println(e);
+            }
+        }
     }
 
     public static void main(String[] args) {

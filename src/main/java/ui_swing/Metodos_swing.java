@@ -1,5 +1,6 @@
 package ui_swing;
 
+import javax.imageio.IIOImage;
 import javax.swing.*;
 import java.awt.*;
 
@@ -22,6 +23,18 @@ public class Metodos_swing {
         botao.setForeground(Color.decode("#F21B7F"));
         botao.setPreferredSize(new Dimension(295, 56));
         return botao;
+    }
+
+    public static JPanel cria_cartaz(String img, int image, int id){
+        JPanel cartaz = new JPanel(new GridLayout(2, 1, 0, 10));
+        cartaz.setPreferredSize(new Dimension(400, 800));
+        cartaz.setOpaque(false);
+        ImageIcon imgCartaz = new ImageIcon("src/main/resources/" + img);
+        JLabel imgCartazLabel = new JLabel(imgCartaz);
+        cartaz.add(imgCartazLabel);
+        JButton botao = new JButton();
+
+        return cartaz;
     }
 }
 //labelUsuario = new JLabel("Usuário:");
