@@ -8,15 +8,9 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class Tela_cadastro_usuario extends JPanel implements ActionListener {
-    private static JTextField nomeText;
-    private static JTextField emailText;
-    private static JTextField senhaText;
-    private JTextField confirmaSenhaText;
-    private static JFormattedTextField cpfText;
-    private static JFormattedTextField rgText;
-    private static JFormattedTextField telefoneText;
-    private static JFormattedTextField dataText;
-    private static JButton cadastrarButton;
+    private static JTextField nomeText, emailText, senhaText, confirmaSenhaText;
+    private static JFormattedTextField cpfText, rgText, telefoneText, dataText;
+    private static JButton cadastrarButton, voltarButton;
 
     public static JTextField getNomeText() {
         return nomeText;
@@ -54,6 +48,10 @@ public class Tela_cadastro_usuario extends JPanel implements ActionListener {
         return cadastrarButton;
     }
 
+    public static JButton getVoltarButton() {
+        return voltarButton;
+    }
+
     public Tela_cadastro_usuario(ActionListener listener) {
         setBackground(Color.decode("#0D1E40"));
         setLayout(new GridBagLayout());
@@ -69,7 +67,7 @@ public class Tela_cadastro_usuario extends JPanel implements ActionListener {
 
         // Adicionando os campos de texto
         gbc.gridy = 1;
-        JPanel inputPanel = new JPanel(new GridLayout(8, 2, 0, 30));
+        JPanel inputPanel = new JPanel(new GridLayout(9, 2, 10, 30));
         inputPanel.setOpaque(false);
         JLabel nome = new JLabel("Nome:");
         nome.setForeground(Color.decode("#F21B7F"));
@@ -111,33 +109,20 @@ public class Tela_cadastro_usuario extends JPanel implements ActionListener {
         inputPanel.add(confirmaSenha);
         confirmaSenhaText = new JTextField(20);
         inputPanel.add(confirmaSenhaText);
-        add(inputPanel, gbc);
-
-        // Adicionando o botão
-        gbc.gridy = 2;
         cadastrarButton = Metodos_swing.cria_botao("Cadastrar");
         cadastrarButton.addActionListener(listener);
-        add(cadastrarButton, gbc);
+        inputPanel.add(cadastrarButton);
+        voltarButton = Metodos_swing.cria_botao("Voltar");
+        voltarButton.addActionListener(listener);
+        inputPanel.add(voltarButton);
+        add(inputPanel, gbc);
     }
 
-//    public void actionPerformed(ActionEvent e) {
-//        if (e.getSource() == cadastrarButton) {
-//            String cpfSemPontuacao = cpfText.getText().replaceAll("\\D", "");
-//            String rgSemPontuacao = rgText.getText().replaceAll("\\D", "");
-//            Usuario u = new Usuario(nomeText.getText(), cpfSemPontuacao, rgSemPontuacao, telefoneText.getText(), emailText.getText(), senhaText.getText());
-//            u.setData_de_nascimento(u.transformaDataSQL(dataText.getText()));
-//            try {
-//                Cad_usuario.Cad_user(u);
-//            } catch (Exception ex) {
-//                ex.printStackTrace();
-//            }
-//        }
-//    }
-        private MaskFormatter setMascara(String mascara){
+    private MaskFormatter setMascara(String mascara){
         MaskFormatter mask = null;
-        try{
-            mask = new MaskFormatter(mascara);
-        }catch(java.text.ParseException ex){}
+            try{
+                mask = new MaskFormatter(mascara);
+            }catch(java.text.ParseException ex){}
         return mask;
     }
     private JFormattedTextField criarCaixaTextoFormatada(String mascara) {

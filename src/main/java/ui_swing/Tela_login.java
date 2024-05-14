@@ -65,10 +65,14 @@ import java.awt.event.*;
 public class Tela_login extends JPanel /*implements ActionListener*/{
     private static JTextField userText;
     private static JTextField senhaText;
-    private static JButton entrarButton;
+    private static JButton entrarButton, voltarButton;
 
     public static JButton getEntrarButton() {
         return entrarButton;
+    }
+
+    public static JButton getVoltarButton() {
+        return voltarButton;
     }
 
     public static JTextField getUserText() {
@@ -94,7 +98,7 @@ public class Tela_login extends JPanel /*implements ActionListener*/{
 
         // Adicionando os campos de texto
         gbc.gridy = 1;
-        JPanel inputPanel = new JPanel(new GridLayout(2, 2, 0, 30));
+        JPanel inputPanel = new JPanel(new GridLayout(3, 2, 10, 30));
         inputPanel.setOpaque(false);
         JLabel user = new JLabel("User:");
         user.setForeground(Color.decode("#F21B7F"));
@@ -106,13 +110,13 @@ public class Tela_login extends JPanel /*implements ActionListener*/{
         inputPanel.add(senha);
         senhaText = new JTextField(20);
         inputPanel.add(senhaText);
-        add(inputPanel, gbc);
-
-        // Adicionando o botão
-        gbc.gridy = 2;
         entrarButton = Metodos_swing.cria_botao("Entrar");
         entrarButton.addActionListener(listener);
-        add(entrarButton, gbc);
+        inputPanel.add(entrarButton);
+        voltarButton = Metodos_swing.cria_botao("Voltar");
+        voltarButton.addActionListener(listener);
+        inputPanel.add(voltarButton);
+        add(inputPanel, gbc);
     }
 }
 

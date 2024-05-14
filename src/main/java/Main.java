@@ -1,6 +1,8 @@
 import Entities.*;
 import sql_actions.*;
 import ui_swing.*;
+import validations.Verifica_docs;
+import validations.Verifica_idade;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -12,11 +14,11 @@ import java.io.FileInputStream;
 public class Main extends Component {
 
     private int id;
-    private JFrame frame;
-    private JPanel cards;
+    private final JFrame frame;
+    private final JPanel cards;
     private static CardLayout cardLayout;
 
-    private Tela_de_inicio telaInicio;
+    private final Tela_de_inicio telaInicio;
     private Tela_login telaLogin;
     private Tela_cadastro_usuario telaCadastro;
     private Tela_principal telaPrincipal;
@@ -49,17 +51,27 @@ public class Main extends Component {
         telaLogin = new Tela_login(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == Tela_login.getEntrarButton()) {
-                    try {
-                        id = Id_casoLogin.getUserId(Tela_login.getUserText().getText(), Tela_login.getSenhaText().getText());
-                        if(id != -1){
-                            JOptionPane.showMessageDialog(null, "Bem-vindo!");
-                            cardLayout.show(cards, "menu_principal");
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Usuário não encontrado!");
+                    if(Tela_login.getUserText().getText().isEmpty()){
+                        JOptionPane.showMessageDialog(null, "Campo usuário obrigatório!");
+                        Tela_login.getUserText().requestFocus();
+                    } else if (Tela_login.getSenhaText().getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Campo senha obrigatório!");
+                        Tela_login.getSenhaText().requestFocus();
+                    } else {
+                        try {
+                            id = Id_casoLogin.getUserId(Tela_login.getUserText().getText(), Tela_login.getSenhaText().getText());
+                            if (id != -1) {
+                                JOptionPane.showMessageDialog(null, "Bem-vindo!");
+                                cardLayout.show(cards, "menu_principal");
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Usuário não encontrado!");
+                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
                         }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
                     }
+                } else if (e.getSource() == Tela_login.getVoltarButton()) {
+                    cardLayout.show(cards, "inicio");
                 }
             }
         });
@@ -68,6 +80,22 @@ public class Main extends Component {
                 if (e.getSource() == Tela_cadastro_usuario.getCadastrarButton()) {
                     String cpfSemPontuacao = Tela_cadastro_usuario.getCpfText().getText().replaceAll("\\D", "");
                     String rgSemPontuacao = Tela_cadastro_usuario.getRgText().getText().replaceAll("\\D", "");
+                    if(Tela_cadastro_usuario.getCpfText().getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Campo CPF obrigatório!");
+                        Tela_cadastro_usuario.getCpfText().requestFocus();
+                    } else if (!Verifica_docs.validarCPF(cpfSemPontuacao)) {
+                        JOptionPane.showMessageDialog(null, "CPF inválido!");
+                        Tela_cadastro_usuario.getCpfText().setText("");
+                        Tela_cadastro_usuario.getCpfText().requestFocus();
+                    } else if (Tela_cadastro_usuario.getRgText().getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Campo RG obrigatório!");
+                        Tela_cadastro_usuario.getRgText().requestFocus();
+                    } else if (!Verifica_docs.validarRG(rgSemPontuacao)) {
+                        JOptionPane.showMessageDialog(null, "RG inválido!");
+                        Tela_cadastro_usuario.getRgText().setText("");
+                        Tela_cadastro_usuario.getRgText().requestFocus();
+                    }
+
                     Usuario u = new Usuario(Tela_cadastro_usuario.getNomeText().getText(), cpfSemPontuacao, rgSemPontuacao, Tela_cadastro_usuario.getTelefoneText().getText(), Tela_cadastro_usuario.getEmailText().getText(), Tela_cadastro_usuario.getSenhaText().getText());
                     u.setData_de_nascimento(u.transformaDataSQL(Tela_cadastro_usuario.getDataText().getText()));
                     try {
@@ -76,6 +104,8 @@ public class Main extends Component {
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
+                } else if (e.getSource() == Tela_cadastro_usuario.getVoltarButton()) {
+                    cardLayout.show(cards, "inicio");
                 }
             }
         });
@@ -84,6 +114,12 @@ public class Main extends Component {
             public void actionPerformed(ActionEvent e) {
                 if(e.getSource() == Tela_principal.getHome()){
                     cardLayout.show(cards, "cad_filme");
+                } else if (e.getSource() == Tela_principal.getNakabank()) {
+                    try {
+                        System.out.println(Verifica_idade.verifica(id));
+                    } catch (Exception err) {
+                        System.out.println(err);
+                    }
                 }
             }
         });

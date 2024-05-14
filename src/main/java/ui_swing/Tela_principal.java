@@ -18,7 +18,6 @@ public class Tela_principal extends JPanel implements ActionListener {
     }
 
     public Tela_principal(ActionListener listener) {
-
         setBackground(Color.decode("#0D1E40"));
         setLayout(new BorderLayout()); // Usar BorderLayout para colocar o painel no topo
 
