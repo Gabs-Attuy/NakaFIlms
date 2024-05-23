@@ -5,23 +5,6 @@ import sql_actions.Busca_usuario;
 import java.util.Date;
 import java.util.regex.*;
 public class Verifica_idade {
-//    public static void main(String[] args) {
-//        // Data de nascimento da pessoa
-//        Date dataDeNascimento = Busca_usuario.getDatadeNasc(); // Ano, Mês (0-11), Dia
-//
-//        // Data atual
-//        Date dataAtual = new Date();
-//
-//        // Calcular idade
-//        int idade = calcularIdade(dataDeNascimento, dataAtual);
-//
-//        // Verificar se a idade é maior ou igual a 18
-//        if (idade >= 18) {
-//            System.out.println("Você é maior de idade.");
-//        } else {
-//            System.out.println("Você é menor de idade.");
-//        }
-//    }
     public static boolean verifica(int id) throws Exception {
         Date data = data(id);
         int idade = calcularIdade(data);

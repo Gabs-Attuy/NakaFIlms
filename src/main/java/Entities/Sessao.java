@@ -7,6 +7,7 @@ public class Sessao {
     private String idioma;
     private Date data_Sessao;
     private Time horario;
+    private Integer sala;
 
     public String getIdioma() {
         return idioma;
@@ -32,9 +33,18 @@ public class Sessao {
         this.horario = horario;
     }
 
-    public Sessao(String idioma, Date data_Sessao, Time horario) {
+    public Integer getSala() {
+        return sala;
+    }
+
+    public void setSala(Integer sala) {
+        this.sala = sala;
+    }
+
+    public Sessao(String idioma, Date data_Sessao, Time horario, Integer sala) {
         this.idioma = idioma;
         this.data_Sessao = data_Sessao;
         this.horario = horario;
+        this.sala = sala;
     }
 }

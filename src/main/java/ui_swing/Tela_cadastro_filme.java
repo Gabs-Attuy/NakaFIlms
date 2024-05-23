@@ -6,6 +6,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.FileInputStream;
 
+//import static ui_swing.Tela_principal.mostrarData;
+
 public class Tela_cadastro_filme extends JPanel {
 
     //objeto para o fluxo de bytes
@@ -109,7 +111,7 @@ public class Tela_cadastro_filme extends JPanel {
         footer.setOpaque(true);
         footer.setBackground(Color.decode("#F2F0C9"));
         JLabel data = new JLabel();
-        Tela_principal.mostrarData(data);
+//        mostrarData(data);
         data.setForeground(Color.decode("#F21B7F"));
         footer.add(data);
 

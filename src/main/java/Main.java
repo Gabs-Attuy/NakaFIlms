@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 public class Main extends Component {
 
     private int id;
+    private String user;
     private final JFrame frame;
     private final JPanel cards;
     private static CardLayout cardLayout;
@@ -23,6 +24,11 @@ public class Main extends Component {
     private Tela_cadastro_usuario telaCadastro;
     private Tela_principal telaPrincipal;
     private Tela_cadastro_filme telaCadFilme;
+    private Tela_cad_sessoes telaCadSessoes;
+    private Tela_filme_escolhido telaFilmeEscolhido;
+    public String getUser() {
+        return user;
+    }
 
     public static CardLayout getCardLayout() {
         return cardLayout;
@@ -32,7 +38,8 @@ public class Main extends Component {
         frame = new JFrame("NakaFilms");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Dimension tela = Metodos_swing.getScreensize();
-        frame.setSize(tela.width, tela.height);
+        frame.setSize(1366, 768);
+        frame.setResizable(false);
         frame.setLocationRelativeTo(null);
 
         cardLayout = new CardLayout();
@@ -61,7 +68,10 @@ public class Main extends Component {
                         try {
                             id = Id_casoLogin.getUserId(Tela_login.getUserText().getText(), Tela_login.getSenhaText().getText());
                             if (id != -1) {
-                                JOptionPane.showMessageDialog(null, "Bem-vindo!");
+                                user = Busca_usuario.getNome(id);
+                                assert user != null;
+//                                Tela_principal.getNomeUser().setText("Olá " + user.split(" ")[0]);
+                                JOptionPane.showMessageDialog(null, "Bem-vindo " + user + "!");
                                 cardLayout.show(cards, "menu_principal");
                             } else {
                                 JOptionPane.showMessageDialog(null, "Usuário não encontrado!");
@@ -112,15 +122,16 @@ public class Main extends Component {
         telaPrincipal = new Tela_principal(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(e.getSource() == Tela_principal.getHome()){
-                    cardLayout.show(cards, "cad_filme");
-                } else if (e.getSource() == Tela_principal.getNakabank()) {
-                    try {
-                        System.out.println(Verifica_idade.verifica(id));
-                    } catch (Exception err) {
-                        System.out.println(err);
-                    }
-                }
+                if(e.getSource() == Tela_principal.getjButton18()) {
+                    cardLayout.show(cards, "filme_escolhido");
+                }/*else if (e.getSource() == Tela_principal.getNakabank()) {
+//                    try {
+//                        System.out.println(Verifica_idade.verifica(id));
+//                    } catch (Exception err) {
+//                        System.out.println(err);
+//                    }
+                    cardLayout.show(cards, "cad_sessao");
+                }*/
             }
         });
         telaCadFilme = new Tela_cadastro_filme(new ActionListener() {
@@ -141,19 +152,41 @@ public class Main extends Component {
                             Tela_cadastro_filme.getTamanho());
                     try {
                         Cad_filme.Cad_filmes(f);
-                        cardLayout.show(cards, "menu_principal");
+                        cardLayout.show(cards, "cad_sessao");
                     } catch (Exception er){
                         er.printStackTrace();
                     }
                 }
             }
         });
+        telaCadSessoes = new Tela_cad_sessoes(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(e.getSource() == Tela_cad_sessoes.getCadastrarButton()) {
+                    
+                } else if (e.getSource() == Tela_cad_sessoes.getVoltarButton()) {
+                    Cad_sessoes.setId_filme(-1);
+                    cardLayout.show(cards, "cad_filme");
+                }
+            }
+        });
+        telaFilmeEscolhido = new Tela_filme_escolhido(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(e.getSource() == Tela_filme_escolhido.getHomeButton()) {
+                    cardLayout.show(cards, "menu_principal");
+                }
+            }
+        });
+
         // Adicionando as telas ao CardLayout
         cards.add(telaInicio, "inicio");
         cards.add(telaLogin, "login");
         cards.add(telaCadastro, "cadastro");
         cards.add(telaPrincipal, "menu_principal");
         cards.add(telaCadFilme, "cad_filme");
+        cards.add(telaCadSessoes, "cad_sessao");
+        cards.add(telaFilmeEscolhido, "filme_escolhido");
         frame.add(cards);
         frame.setVisible(true);
     }
