@@ -363,7 +363,7 @@ package ui_swing;
 
 
 import Entities.SessaoItem;
-import sql_actions.Busca_assentos;
+import sql_actions.Read;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -404,17 +404,6 @@ public class Tela_filme_escolhido extends javax.swing.JPanel {
         botaoConfirmar = new javax.swing.JButton();
         Secao = new javax.swing.JLabel();
         comboSecoes = new javax.swing.JComboBox<>();
-
-//        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-//        jPanel4.setLayout(jPanel4Layout);
-//        jPanel4Layout.setHorizontalGroup(
-//                jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-//                        .addGap(0, 100, Short.MAX_VALUE)
-//        );
-//        jPanel4Layout.setVerticalGroup(
-//                jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-//                        .addGap(0, 100, Short.MAX_VALUE)
-//        );
 
         setBackground(new java.awt.Color(13, 30, 64));
         setMinimumSize(new java.awt.Dimension(1366, 768));
@@ -582,7 +571,7 @@ public class Tela_filme_escolhido extends javax.swing.JPanel {
                 SessaoItem selectedItem = (SessaoItem) comboSecoes.getSelectedItem();
                 if (selectedItem != null) {
                     int idSessao = selectedItem.getId();
-                    Busca_assentos.Busca_assento(idSessao);
+                    Read.Busca_assento(idSessao);
                 } else {
                     System.out.println("Nenhuma sessão selecionada.");
                 }

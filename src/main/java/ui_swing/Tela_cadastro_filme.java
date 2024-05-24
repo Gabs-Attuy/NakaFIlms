@@ -1,8 +1,7 @@
 package ui_swing;
 
 import Entities.Filme;
-import sql_actions.Cad_filme;
-import run_main.Main;
+import sql_actions.Create;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -217,7 +216,7 @@ public class Tela_cadastro_filme extends JPanel {
                         Tela_cadastro_filme.getFis(),
                         Tela_cadastro_filme.getTamanho());
                 try {
-                    Cad_filme.Cad_filmes(f);
+                    Create.Cad_filmes(f);
                 } catch (Exception er){
                     er.printStackTrace();
                 }

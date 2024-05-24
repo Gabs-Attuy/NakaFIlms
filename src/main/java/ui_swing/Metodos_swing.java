@@ -1,9 +1,8 @@
 package ui_swing;
 
 import run_main.Main;
-import sql_actions.Busca_filme;
+import sql_actions.Read;
 
-import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -133,7 +132,7 @@ public class Metodos_swing {
                 String actionCommand = e.getActionCommand();
                 int id_filme = Integer.parseInt(actionCommand);
                 try {
-                    Busca_filme.getFilme(id_filme);
+                    Read.getFilme(id_filme);
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }

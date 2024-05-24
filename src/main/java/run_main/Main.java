@@ -5,12 +5,9 @@ import sql_actions.*;
 import ui_swing.*;
 import validations.Verifica_docs;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.FileInputStream;
 
 public class Main extends Component {
 
@@ -72,13 +69,13 @@ public class Main extends Component {
                         Tela_login.getSenhaText().requestFocus();
                     } else {
                         try {
-                            id = Id_casoLogin.getUserId(Tela_login.getUserText().getText(), Tela_login.getSenhaText().getText());
+                            id = Read.getUserId(Tela_login.getUserText().getText(), Tela_login.getSenhaText().getText());
                             if (id != -1) {
-                                user = Busca_usuario.getNome(id);
+                                user = Read.getNome(id);
                                 assert user != null;
 //                                Tela_principal.getNomeUser().setText("Olá " + user.split(" ")[0]);
                                 JOptionPane.showMessageDialog(null, "Bem-vindo " + user + "!");
-                                Busca_filme.getFilmeCartaz();
+                                Read.getFilmeCartaz();
                                 cardLayout.show(cards, "menu_principal");
                             } else {
                                 JOptionPane.showMessageDialog(null, "Usuário não encontrado!");
@@ -87,8 +84,6 @@ public class Main extends Component {
                             ex.printStackTrace();
                         }
                     }
-                } else if (e.getSource() == Tela_login.getVoltarButton()) {
-                    cardLayout.show(cards, "inicio");
                 }
             }
         });
@@ -116,7 +111,7 @@ public class Main extends Component {
                     Usuario u = new Usuario(Tela_cadastro_usuario.getNomeText().getText(), cpfSemPontuacao, rgSemPontuacao, Tela_cadastro_usuario.getTelefoneText().getText(), Tela_cadastro_usuario.getEmailText().getText(), Tela_cadastro_usuario.getSenhaText().getText());
                     u.setData_de_nascimento(u.transformaDataSQL(Tela_cadastro_usuario.getDataText().getText()));
                     try {
-                        Cad_usuario.Cad_user(u);
+                        Create.Cad_user(u);
                         cardLayout.show(cards, "login");
                     } catch (Exception ex) {
                         ex.printStackTrace();

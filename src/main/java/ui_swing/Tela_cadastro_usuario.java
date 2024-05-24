@@ -1,6 +1,4 @@
 package ui_swing;
-import Entities.Usuario;
-import sql_actions.Cad_usuario;
 
 import javax.swing.*;
 import javax.swing.text.MaskFormatter;

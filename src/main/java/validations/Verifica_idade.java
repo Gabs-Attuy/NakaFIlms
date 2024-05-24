@@ -1,7 +1,7 @@
 package validations;
 
-import sql_actions.Busca_filme;
-import sql_actions.Busca_usuario;
+import sql_actions.Read;
+
 import java.util.Date;
 import java.util.regex.*;
 public class Verifica_idade {
@@ -16,7 +16,7 @@ public class Verifica_idade {
         }
     }
     public static int classificacao() throws Exception {
-        String idadeString = Busca_filme.getClassificacao(2);
+        String idadeString = Read.getClassificacao(2);
 
         // Use uma expressão regular para encontrar o número na string
         String numeroRegex = "\\d+";
@@ -38,7 +38,7 @@ public class Verifica_idade {
     public static Date data(int id){
         Date datanasc;
         try {
-            datanasc = Busca_usuario.getDatadeNasc(id);
+            datanasc = Read.getDatadeNasc(id);
             return datanasc;
         } catch (Exception e) {
             System.out.println(e);

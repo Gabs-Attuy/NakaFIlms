@@ -2,14 +2,12 @@ package ui_swing;
 
 import Entities.Sessao;
 import run_main.Main;
-import sql_actions.Cad_sessoes;
+import sql_actions.Create;
 
 import javax.swing.*;
 import javax.swing.text.MaskFormatter;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.Time;
-import java.util.Date;
 
 public class Tela_cad_sessoes extends JPanel implements ActionListener {
     private static JComboBox<String> idiomaText;
@@ -100,7 +98,7 @@ public class Tela_cad_sessoes extends JPanel implements ActionListener {
                 s.setData_Sessao(s.transformaDataSQL(Tela_cad_sessoes.getDataText().getText()));
                 s.setHorario(s.converterStringParaTime(hora));
                 try {
-                    Cad_sessoes.Cad_sessao(s, converterStringParaDouble(getValorText().getText()));
+                    Create.Cad_sessao(s, converterStringParaDouble(getValorText().getText()));
                     limpaCampos();
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
@@ -112,7 +110,7 @@ public class Tela_cad_sessoes extends JPanel implements ActionListener {
         voltarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Cad_sessoes.setId_filme(-1);
+                Create.setId_filme(-1);
                 Main.getCardLayout().show(Main.getCards(), "cad_filme");
             }
         });
