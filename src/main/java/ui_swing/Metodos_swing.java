@@ -1,10 +1,18 @@
 package ui_swing;
 
+import run_main.Main;
+import sql_actions.Busca_filme;
+
 import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.sql.Blob;
+import java.sql.SQLException;
 
 public class Metodos_swing {
     public static Dimension getScreensize(){
@@ -39,18 +47,35 @@ public class Metodos_swing {
         return cartaz;
     }
 
-    public static JPanel header(JPanel header, JButton home, JButton nakabank, JLabel logo){
+    public static JPanel header(){
+        JPanel header = new JPanel();
+        JLabel logo = new JLabel();
+        JButton nakabank = new JButton();
+        JButton home = new JButton();
         header.setBackground(new java.awt.Color(242, 240, 201));
         logo.setIcon(new ImageIcon("src/main/resources/Logo_header.png"));
         nakabank.setBackground(new java.awt.Color(13, 30, 64));
         nakabank.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         nakabank.setForeground(new java.awt.Color(242, 27, 127));
         nakabank.setText("NakaBank");
+        nakabank.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Main.getCardLayout().show(Main.getCards(), "cad_sessao");
+            }
+        });
 
         home.setBackground(new java.awt.Color(13, 30, 64));
         home.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         home.setForeground(new java.awt.Color(242, 27, 127));
         home.setText("Home");
+        home.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Main.getCardLayout().show(Main.getCards(), "menu_principal");
+            }
+        });
+
         GroupLayout headerLayout = new GroupLayout(header);
         header.setLayout(headerLayout);
         headerLayout.setHorizontalGroup(
@@ -78,22 +103,44 @@ public class Metodos_swing {
         return header;
     }
 
-    public static JPanel cartaz(){
+    public static Icon recuperaFoto(Blob foto) throws SQLException {
+        byte[] img = foto.getBytes(1, (int) foto.length());
+        BufferedImage imagem = null;
+        try {
+            imagem = ImageIO.read(new ByteArrayInputStream(img));
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        assert imagem != null;
+        ImageIcon icone = new ImageIcon(imagem);
+        Icon cartaz = new ImageIcon(icone.getImage().getScaledInstance(217, 297, Image.SCALE_SMOOTH));
+        return cartaz;
+    }
+    public static void cartaz(int id, Blob foto) throws SQLException {
         JPanel panel = new JPanel();
         JLabel label = new JLabel();
         JButton botao = new JButton();
+        label.setSize(217, 297);
 
         panel.setBackground(new java.awt.Color(13, 30, 64));
         panel.setPreferredSize(new java.awt.Dimension(217, 297));
 
         botao.setText("Agendar");
+        botao.setActionCommand(String.valueOf(id));
         botao.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                String actionCommand = e.getActionCommand();
+                int id_filme = Integer.parseInt(actionCommand);
+                try {
+                    Busca_filme.getFilme(id_filme);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+                Main.getCardLayout().show(Main.getCards(), "filme_escolhido");
             }
         });
-        label.setIcon(new ImageIcon("src/main/resources/images 1.png"));
+        label.setIcon(recuperaFoto(foto));
         javax.swing.GroupLayout panelLayout = new javax.swing.GroupLayout(panel);
         panel.setLayout(panelLayout);
         panelLayout.setHorizontalGroup(
@@ -114,7 +161,7 @@ public class Metodos_swing {
                                 .addComponent(botao)
                                 .addGap(15, 15, 15))
         );
-        return panel;
+        Tela_principal.getjPanel20().add(panel);
     }
 }
 //labelUsuario = new JLabel("Usuário:");

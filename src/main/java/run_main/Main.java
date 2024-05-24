@@ -1,8 +1,9 @@
+package run_main;
+
 import Entities.*;
 import sql_actions.*;
 import ui_swing.*;
 import validations.Verifica_docs;
-import validations.Verifica_idade;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -16,7 +17,7 @@ public class Main extends Component {
     private int id;
     private String user;
     private final JFrame frame;
-    private final JPanel cards;
+    private static JPanel cards;
     private static CardLayout cardLayout;
 
     private final Tela_de_inicio telaInicio;
@@ -26,6 +27,8 @@ public class Main extends Component {
     private Tela_cadastro_filme telaCadFilme;
     private Tela_cad_sessoes telaCadSessoes;
     private Tela_filme_escolhido telaFilmeEscolhido;
+    private Tela_selecao_lugar telaSelecaoLugar;
+
     public String getUser() {
         return user;
     }
@@ -34,10 +37,13 @@ public class Main extends Component {
         return cardLayout;
     }
 
+    public static JPanel getCards() {
+        return cards;
+    }
+
     public Main() {
         frame = new JFrame("NakaFilms");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        Dimension tela = Metodos_swing.getScreensize();
         frame.setSize(1366, 768);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
@@ -72,6 +78,7 @@ public class Main extends Component {
                                 assert user != null;
 //                                Tela_principal.getNomeUser().setText("Olá " + user.split(" ")[0]);
                                 JOptionPane.showMessageDialog(null, "Bem-vindo " + user + "!");
+                                Busca_filme.getFilmeCartaz();
                                 cardLayout.show(cards, "menu_principal");
                             } else {
                                 JOptionPane.showMessageDialog(null, "Usuário não encontrado!");
@@ -119,65 +126,11 @@ public class Main extends Component {
                 }
             }
         });
-        telaPrincipal = new Tela_principal(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(e.getSource() == Tela_principal.getjButton18()) {
-                    cardLayout.show(cards, "filme_escolhido");
-                }/*else if (e.getSource() == Tela_principal.getNakabank()) {
-//                    try {
-//                        System.out.println(Verifica_idade.verifica(id));
-//                    } catch (Exception err) {
-//                        System.out.println(err);
-//                    }
-                    cardLayout.show(cards, "cad_sessao");
-                }*/
-            }
-        });
-        telaCadFilme = new Tela_cadastro_filme(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(e.getSource() == Tela_cadastro_filme.getProcuraFoto()) {
-                    carregarFoto();
-                } else if (e.getSource() == Tela_cadastro_filme.getCadastrarButton()) {
-                    Filme f = new Filme(Tela_cadastro_filme.getNomeText().getText(),
-                            Tela_cadastro_filme.getDuracaoText().getText(),
-                            Tela_cadastro_filme.getElencoText().getText(),
-                            Tela_cadastro_filme.getDiretorText().getText(),
-                            Tela_cadastro_filme.getGeneroText().getText(),
-                            Tela_cadastro_filme.getDistribuidoraText().getText(),
-                            Tela_cadastro_filme.getClassificacaoText().getText(),
-                            Tela_cadastro_filme.getSinopseText().getText(),
-                            Tela_cadastro_filme.getFis(),
-                            Tela_cadastro_filme.getTamanho());
-                    try {
-                        Cad_filme.Cad_filmes(f);
-                        cardLayout.show(cards, "cad_sessao");
-                    } catch (Exception er){
-                        er.printStackTrace();
-                    }
-                }
-            }
-        });
-        telaCadSessoes = new Tela_cad_sessoes(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(e.getSource() == Tela_cad_sessoes.getCadastrarButton()) {
-                    
-                } else if (e.getSource() == Tela_cad_sessoes.getVoltarButton()) {
-                    Cad_sessoes.setId_filme(-1);
-                    cardLayout.show(cards, "cad_filme");
-                }
-            }
-        });
-        telaFilmeEscolhido = new Tela_filme_escolhido(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(e.getSource() == Tela_filme_escolhido.getHomeButton()) {
-                    cardLayout.show(cards, "menu_principal");
-                }
-            }
-        });
+        telaPrincipal = new Tela_principal();
+        telaCadFilme = new Tela_cadastro_filme();
+        telaCadSessoes = new Tela_cad_sessoes();
+        telaFilmeEscolhido = new Tela_filme_escolhido();
+        telaSelecaoLugar = new Tela_selecao_lugar();
 
         // Adicionando as telas ao CardLayout
         cards.add(telaInicio, "inicio");
@@ -187,26 +140,9 @@ public class Main extends Component {
         cards.add(telaCadFilme, "cad_filme");
         cards.add(telaCadSessoes, "cad_sessao");
         cards.add(telaFilmeEscolhido, "filme_escolhido");
+        cards.add(telaSelecaoLugar, "selecao_lugar");
         frame.add(cards);
         frame.setVisible(true);
-    }
-
-    public void carregarFoto(){
-        JFileChooser jfc = new JFileChooser();
-        jfc.setDialogTitle("Selecionar Imagem do Cartaz");
-        jfc.setFileFilter(new FileNameExtensionFilter("Arquivo de imagens (*.PNG, *.JPG, *.JPEG)", "png", "jpg", "jpeg"));
-        int resultado = jfc.showSaveDialog(this);
-        if(resultado == JFileChooser.APPROVE_OPTION){
-            try{
-                Tela_cadastro_filme.fis = new FileInputStream(jfc.getSelectedFile());
-                Tela_cadastro_filme.tamanho = (int) jfc.getSelectedFile().length();
-                Image foto = ImageIO.read(jfc.getSelectedFile()).getScaledInstance(Tela_cadastro_filme.getLblCartaz().getWidth(), Tela_cadastro_filme.getLblCartaz().getHeight(), Image.SCALE_SMOOTH);
-                Tela_cadastro_filme.getLblCartaz().setIcon(new ImageIcon(foto));
-                Tela_cadastro_filme.getLblCartaz().updateUI();
-            } catch (Exception e){
-                System.out.println(e);
-            }
-        }
     }
 
     public static void main(String[] args) {

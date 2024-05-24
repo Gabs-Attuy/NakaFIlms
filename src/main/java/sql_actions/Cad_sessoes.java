@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Cad_sessoes {
-    private static int id_filme;
+    private static int id_filme = 23;
 
     public static int getId_filme() {
         return id_filme;
@@ -25,7 +25,7 @@ public class Cad_sessoes {
         try {
             SqlConnection conection = new SqlConnection();
             Connection cn = conection.openDB();
-            PreparedStatement ps = cn.prepareStatement("INSERT INTO sessao (idioma, data, horario, FK_filme_id, sala) VALUES (?, ?, ?, ?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = cn.prepareStatement("INSERT INTO sessao (idioma, data_sessao, horario, FK_filme_id, sala) VALUES (?, ?, ?, ?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
 
             ps.setString(1, s.getIdioma());
             ps.setDate(2, s.getData_Sessao());
@@ -57,7 +57,7 @@ public class Cad_sessoes {
         try {
             SqlConnection conection = new SqlConnection();
             Connection cn = conection.openDB();
-            PreparedStatement ps = cn.prepareStatement("INSERT INTO assento (n_assento, fileira, status_assento, valor, FK_sessao_id) VALUES (?, ?, ?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = cn.prepareStatement("INSERT INTO assento (n_assento, fileira, status_assento, valor, FK_sessao_id) VALUES (?, ?, ?, ?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
 
             for (char fileira : fileiras) {
                 for (int i = 1; i <= assentos_fileira; i++) {

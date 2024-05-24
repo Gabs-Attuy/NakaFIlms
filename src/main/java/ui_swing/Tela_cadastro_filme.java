@@ -1,7 +1,13 @@
 package ui_swing;
 
+import Entities.Filme;
+import sql_actions.Cad_filme;
+import run_main.Main;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.FileInputStream;
@@ -30,10 +36,6 @@ public class Tela_cadastro_filme extends JPanel {
 
     public static JLabel getLblCartaz() {
         return lblCartaz;
-    }
-
-    public static JButton getProcuraFoto() {
-        return procuraFoto;
     }
 
     public static JTextField getNomeText() {
@@ -72,7 +74,7 @@ public class Tela_cadastro_filme extends JPanel {
         return cadastrarButton;
     }
 
-    public Tela_cadastro_filme(ActionListener listener) {
+    public Tela_cadastro_filme() {
         setBackground(Color.decode("#0D1E40"));
         setLayout(new BorderLayout()); // Usar BorderLayout para colocar o painel no topo
 
@@ -89,13 +91,11 @@ public class Tela_cadastro_filme extends JPanel {
         fantasma2.setPreferredSize(new Dimension(295, 56));
         header.add(fantasma2);
         nakabank = Metodos_swing.cria_botao_header("NakaBank");
-        nakabank.addActionListener(listener);
         header.add(nakabank);
         JLabel fantasma3 = new JLabel();
         fantasma3.setPreferredSize(new Dimension(148, 56));
         header.add(fantasma3);
         home = Metodos_swing.cria_botao_header("Home");
-        home.addActionListener(listener);
         header.add(home);
         JLabel fantasma4 = new JLabel();
         fantasma4.setPreferredSize(new Dimension(148, 56));
@@ -140,7 +140,12 @@ public class Tela_cadastro_filme extends JPanel {
         lblCartaz.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
         fotoCartaz.add(lblCartaz);
         procuraFoto = Metodos_swing.cria_botao("Procurar Imagem");
-        procuraFoto.addActionListener(listener);
+        procuraFoto.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                carregarFoto();
+            }
+        });
         fotoCartaz.add(procuraFoto);
         add(fotoCartaz, BorderLayout.WEST);
 
@@ -198,9 +203,45 @@ public class Tela_cadastro_filme extends JPanel {
 //        // Adicionando o botão
 //        gbc.gridy = 2;
         cadastrarButton = Metodos_swing.cria_botao("Cadastrar");
-        cadastrarButton.addActionListener(listener);
+        cadastrarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Filme f = new Filme(Tela_cadastro_filme.getNomeText().getText(),
+                        Tela_cadastro_filme.getDuracaoText().getText(),
+                        Tela_cadastro_filme.getElencoText().getText(),
+                        Tela_cadastro_filme.getDiretorText().getText(),
+                        Tela_cadastro_filme.getGeneroText().getText(),
+                        Tela_cadastro_filme.getDistribuidoraText().getText(),
+                        Tela_cadastro_filme.getClassificacaoText().getText(),
+                        Tela_cadastro_filme.getSinopseText().getText(),
+                        Tela_cadastro_filme.getFis(),
+                        Tela_cadastro_filme.getTamanho());
+                try {
+                    Cad_filme.Cad_filmes(f);
+                } catch (Exception er){
+                    er.printStackTrace();
+                }
+            }
+        });
         add(cadastrarButton, BorderLayout.EAST);
     }
 
+    public void carregarFoto(){
+        JFileChooser jfc = new JFileChooser();
+        jfc.setDialogTitle("Selecionar Imagem do Cartaz");
+        jfc.setFileFilter(new FileNameExtensionFilter("Arquivo de imagens (*.PNG, *.JPG, *.JPEG)", "png", "jpg", "jpeg"));
+        int resultado = jfc.showSaveDialog(this);
+        if(resultado == JFileChooser.APPROVE_OPTION){
+            try{
+                Tela_cadastro_filme.fis = new FileInputStream(jfc.getSelectedFile());
+                Tela_cadastro_filme.tamanho = (int) jfc.getSelectedFile().length();
+                Image foto = ImageIO.read(jfc.getSelectedFile()).getScaledInstance(Tela_cadastro_filme.getLblCartaz().getWidth(), Tela_cadastro_filme.getLblCartaz().getHeight(), Image.SCALE_SMOOTH);
+                Tela_cadastro_filme.getLblCartaz().setIcon(new ImageIcon(foto));
+                Tela_cadastro_filme.getLblCartaz().updateUI();
+            } catch (Exception e){
+                System.out.println(e);
+            }
+        }
+    }
 
 }

@@ -1,16 +1,18 @@
 package sql_actions;
 
 import Entities.Filme;
+import run_main.Main;
+import ui_swing.Metodos_swing;
+
 import java.awt.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.awt.event.ActionListener;
+import java.sql.*;
 
 public class Cad_filme extends Component {
 
     public static void Cad_filmes (Filme f) throws Exception {
         int id_filme = -1;
+        Blob foto = null;
         try {
             SqlConnection conection = new SqlConnection();
             Connection cn = conection.openDB();
@@ -30,6 +32,18 @@ public class Cad_filme extends Component {
             ResultSet rs = ps.getGeneratedKeys();
             if (rs.next()) {
                 id_filme = rs.getInt(1);
+                Cad_sessoes.setId_filme(id_filme);
+            }
+
+            if (id_filme != -1) {
+                PreparedStatement psFoto = cn.prepareStatement("SELECT foto FROM filme WHERE id = ?");
+                psFoto.setInt(1, id_filme);
+                ResultSet rsFoto = psFoto.executeQuery();
+                if (rsFoto.next()) {
+                    foto = rsFoto.getBlob("foto");
+                    Metodos_swing.cartaz(id_filme, foto);
+                }
+                psFoto.close();
             }
 
             System.out.println("Filme cadastrado!");
@@ -38,6 +52,6 @@ public class Cad_filme extends Component {
         } catch (SQLException e) {
             throw new Exception("Falha ao acessar base de dados.\n" + e.getMessage());
         }
-        Cad_sessoes.setId_filme(id_filme);
+        Main.getCardLayout().show(Main.getCards(), "cad_sessao");
     }
 }

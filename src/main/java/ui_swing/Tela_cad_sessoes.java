@@ -1,9 +1,15 @@
 package ui_swing;
 
+import Entities.Sessao;
+import run_main.Main;
+import sql_actions.Cad_sessoes;
+
 import javax.swing.*;
 import javax.swing.text.MaskFormatter;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.Time;
+import java.util.Date;
 
 public class Tela_cad_sessoes extends JPanel implements ActionListener {
     private static JComboBox<String> idiomaText;
@@ -41,7 +47,7 @@ public class Tela_cad_sessoes extends JPanel implements ActionListener {
         return salaText;
     }
 
-    public Tela_cad_sessoes(ActionListener listener) {
+    public Tela_cad_sessoes() {
         setBackground(Color.decode("#0D1E40"));
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -84,12 +90,57 @@ public class Tela_cad_sessoes extends JPanel implements ActionListener {
         salaText = criarCaixaTextoFormatada("#");
         inputPanel.add(salaText);
         cadastrarButton = Metodos_swing.cria_botao("Cadastrar");
-        cadastrarButton.addActionListener(listener);
+        cadastrarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String idioma = (String) getIdiomaText().getSelectedItem();
+                String hora = (String) getHoraText().getSelectedItem();
+                int sala = Integer.parseInt(getSalaText().getText());
+                Sessao s = new Sessao(idioma, sala);
+                s.setData_Sessao(s.transformaDataSQL(Tela_cad_sessoes.getDataText().getText()));
+                s.setHorario(s.converterStringParaTime(hora));
+                try {
+                    Cad_sessoes.Cad_sessao(s, converterStringParaDouble(getValorText().getText()));
+                    limpaCampos();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
         inputPanel.add(cadastrarButton);
         voltarButton = Metodos_swing.cria_botao("Voltar");
-        voltarButton.addActionListener(listener);
+        voltarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Cad_sessoes.setId_filme(-1);
+                Main.getCardLayout().show(Main.getCards(), "cad_filme");
+            }
+        });
         inputPanel.add(voltarButton);
         add(inputPanel, gbc);
+    }
+
+    public static void limpaCampos(){
+        getDataText().setText(null);
+        getSalaText().setText(null);
+        getValorText().setText(null);
+    }
+    public static double converterStringParaDouble(String valorText) {
+        try {
+            // Remover o prefixo "R$"
+            String valorSemPrefixo = valorText.replace("R$", "").trim();
+
+            // Substituir a vírgula por um ponto
+            String valorFormatado = valorSemPrefixo.replace(",", ".");
+
+            // Converter a string para double
+            double valorDouble = Double.parseDouble(valorFormatado);
+
+            return valorDouble;
+        } catch (NumberFormatException e) {
+            System.out.println("Formato de valor inválido: " + valorText);
+            return 0.0; // Ou lance uma exceção, ou trate conforme necessário
+        }
     }
 
     private MaskFormatter setMascara(String mascara){

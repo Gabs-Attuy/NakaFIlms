@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Cad_nakabank {
-    public static int Cad_nakabank (Nakabank n) throws Exception {
+    public static int Cad_conta_nakabank (Nakabank n) throws Exception {
         int nakabankId = -1; // valor padrão caso a inserção falhe
         try {
             SqlConnection conection = new SqlConnection();
