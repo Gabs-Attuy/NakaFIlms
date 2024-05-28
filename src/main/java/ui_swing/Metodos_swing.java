@@ -1,10 +1,13 @@
 package ui_swing;
 
+import Entities.Nakabank;
 import run_main.Main;
+import sql_actions.Create;
 import sql_actions.Read;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.text.MaskFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,12 +15,11 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.sql.Blob;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Random;
 
 public class Metodos_swing {
-    public static Dimension getScreensize(){
-        return Toolkit.getDefaultToolkit().getScreenSize();
-    }
-
     public static JButton cria_botao(String texto){
         JButton botao = new JButton(texto);
         botao.setBackground(Color.decode("#F2F0C9"));
@@ -26,31 +28,14 @@ public class Metodos_swing {
         return botao;
     }
 
-    public static JButton cria_botao_header(String texto){
-        JButton botao = new JButton(texto);
-        botao.setBackground(Color.decode("#0D1E40"));
-        botao.setForeground(Color.decode("#F21B7F"));
-        botao.setPreferredSize(new Dimension(295, 56));
-        return botao;
-    }
-
-    public static JPanel cria_cartaz(String img, int image, int id){
-        JPanel cartaz = new JPanel(new GridLayout(2, 1, 0, 10));
-        cartaz.setPreferredSize(new Dimension(400, 800));
-        cartaz.setOpaque(false);
-        ImageIcon imgCartaz = new ImageIcon("src/main/resources/" + img);
-        JLabel imgCartazLabel = new JLabel(imgCartaz);
-        cartaz.add(imgCartazLabel);
-        JButton botao = new JButton();
-
-        return cartaz;
-    }
-
     public static JPanel header(){
         JPanel header = new JPanel();
         JLabel logo = new JLabel();
         JButton nakabank = new JButton();
         JButton home = new JButton();
+        JButton sair = new JButton();
+        JButton perfil = new JButton();
+
         header.setBackground(new java.awt.Color(242, 240, 201));
         logo.setIcon(new ImageIcon("src/main/resources/Logo_header.png"));
         nakabank.setBackground(new java.awt.Color(13, 30, 64));
@@ -60,7 +45,30 @@ public class Metodos_swing {
         nakabank.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Main.getCardLayout().show(Main.getCards(), "cad_sessao");
+                try {
+                    int id_naka = Read.getNakabank(Main.getId());
+                    if(id_naka == -1) {
+                        int result = JOptionPane.showConfirmDialog(
+                                null,
+                                "Você não possuí uma conta NakaBank.\nDeseja criar uma conta NakaBank?",
+                                "Criar conta NakaBank",
+                                JOptionPane.YES_NO_OPTION
+                        );
+                        if(result == JOptionPane.YES_OPTION){
+                            int senha = Integer.parseInt(JOptionPane.showInputDialog("Insira a sua senha NakaBank:"));
+                            Random rm = new Random();
+                            Nakabank n = new Nakabank(rm.nextInt(1,1000), senha, 50);
+                            Create.Cad_conta_nakabank(n, Main.getId());
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Cadastro cancelado.");
+                        }
+                    } else {
+                        Read.getNakabankInforms(id_naka);
+                        Main.getCardLayout().show(Main.getCards(), "nakabank");
+                    }
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
 
@@ -75,18 +83,50 @@ public class Metodos_swing {
             }
         });
 
-        GroupLayout headerLayout = new GroupLayout(header);
+        sair.setBackground(new java.awt.Color(13, 30, 64));
+        sair.setFont(new java.awt.Font("Segoe UI", 0, 24));
+        sair.setForeground(new java.awt.Color(242, 27, 127));
+        sair.setText("Sair");
+        sair.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int sair = JOptionPane.showConfirmDialog(null, "Deseja mesmo sair?");
+                if (sair == JOptionPane.YES_OPTION){
+                    Main.setId(-1);
+                    Tela_principal.getjPanel20().removeAll();
+                    Main.getCardLayout().show(Main.getCards(), "inicio");
+                }
+            }
+        });
+
+        perfil.setBackground(new java.awt.Color(13, 30, 64));
+        perfil.setFont(new java.awt.Font("Segoe UI", 0, 24));
+        perfil.setForeground(new java.awt.Color(242, 27, 127));
+        perfil.setText("Atualizar Perfil");
+        perfil.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Read.getUser();
+                Main.getCardLayout().show(Main.getCards(), "atualiza_user");
+            }
+        });
+
+        javax.swing.GroupLayout headerLayout = new javax.swing.GroupLayout(header);
         header.setLayout(headerLayout);
         headerLayout.setHorizontalGroup(
                 headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, headerLayout.createSequentialGroup()
                                 .addGap(20, 20, 20)
                                 .addComponent(logo)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 567, Short.MAX_VALUE)
+                                .addGap(57, 57, 57)
                                 .addComponent(nakabank, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(49, 49, 49)
+                                .addGap(18, 18, 18)
                                 .addComponent(home, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(187, 187, 187))
+                                .addGap(18, 18, 18)
+                                .addComponent(perfil, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(sair, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(170, Short.MAX_VALUE))
         );
         headerLayout.setVerticalGroup(
                 headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -96,10 +136,35 @@ public class Metodos_swing {
                                         .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGroup(headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                                 .addComponent(nakabank, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(home, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addComponent(home, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(perfil, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(sair, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addContainerGap(15, Short.MAX_VALUE))
         );
         return header;
+    }
+
+    public static JPanel footer() {
+        JPanel footer = new JPanel();
+        JLabel data = new JLabel();
+        footer.setBackground(new java.awt.Color(242, 240, 201));
+        Metodos_swing.mostrarData(data);
+        javax.swing.GroupLayout footerLayout = new javax.swing.GroupLayout(footer);
+        footer.setLayout(footerLayout);
+        footerLayout.setHorizontalGroup(
+                footerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(footerLayout.createSequentialGroup()
+                                .addGap(683, 683, 683)
+                                .addComponent(data)
+                                .addContainerGap(683, Short.MAX_VALUE))
+        );
+        footerLayout.setVerticalGroup(
+                footerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(footerLayout.createSequentialGroup()
+                                .addComponent(data)
+                                .addGap(0, 25, Short.MAX_VALUE))
+        );
+        return footer;
     }
 
     public static Icon recuperaFoto(Blob foto) throws SQLException {
@@ -115,6 +180,7 @@ public class Metodos_swing {
         Icon cartaz = new ImageIcon(icone.getImage().getScaledInstance(217, 297, Image.SCALE_SMOOTH));
         return cartaz;
     }
+
     public static void cartaz(int id, Blob foto) throws SQLException {
         JPanel panel = new JPanel();
         JLabel label = new JLabel();
@@ -136,6 +202,7 @@ public class Metodos_swing {
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
+                Tela_filme_escolhido.setId_filme(id_filme);
                 Main.getCardLayout().show(Main.getCards(), "filme_escolhido");
             }
         });
@@ -162,22 +229,28 @@ public class Metodos_swing {
         );
         Tela_principal.getjPanel20().add(panel);
     }
+
+    public static void mostrarData(JLabel lbldata){
+        Date data = new Date();
+        DateFormat formatador = DateFormat.getDateInstance(DateFormat.FULL);
+        lbldata.setText(formatador.format(data));
+    }
+
+    private static MaskFormatter setMascara(String mascara){
+        MaskFormatter mask = null;
+        try{
+            mask = new MaskFormatter(mascara);
+        }catch(java.text.ParseException ex){}
+        return mask;
+    }
+    public static JFormattedTextField criarCaixaTextoFormatada(String mascara) {
+        JFormattedTextField texto = new JFormattedTextField(setMascara(mascara));
+        texto.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        return texto;
+    }
 }
-//labelUsuario = new JLabel("Usuário:");
-//labelSenha = new JLabel("Senha:");
-//campoUsuario = new JTextField(20);
-//campoSenha = new JPasswordField(20);
-//botaoLogin = new JButton("Login");
-//
-//// Adicionando listener ao botão de login
-//        botaoLogin.addActionListener(this);
-//
-//// Criando um painel para organizar os componentes
-//JPanel painel = new JPanel();
-//        painel.setLayout(new GridLayout(3, 2));
-//        painel.add(labelUsuario);
-//        painel.add(campoUsuario);
-//        painel.add(labelSenha);
-//        painel.add(campoSenha);
-//        painel.add(new JLabel()); // Espaço em branco
-//        painel.add(botaoLogin);

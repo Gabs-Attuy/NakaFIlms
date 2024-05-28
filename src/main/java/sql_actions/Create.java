@@ -3,9 +3,13 @@ package sql_actions;
 import Entities.*;
 import run_main.Main;
 import ui_swing.Metodos_swing;
+import ui_swing.Tela_apagar_filmes;
+import ui_swing.Tela_selecao_lugar;
 
 import javax.swing.*;
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Create {
     private static int id_filme = 23;
@@ -145,7 +149,7 @@ public class Create {
         }
     }
 
-    public static int Cad_conta_nakabank (Nakabank n) throws Exception {
+    public static void Cad_conta_nakabank (Nakabank n, int id) throws Exception {
         int nakabankId = -1; // valor padrão caso a inserção falhe
         try {
             SqlConnection conection = new SqlConnection();
@@ -153,7 +157,7 @@ public class Create {
             PreparedStatement ps = cn.prepareStatement("INSERT INTO nakabank (n_conta, codigo_seguranca, saldo) VALUES (?, ?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
 
             ps.setInt(1, n.getN_conta());
-            ps.setInt(2, n.getCodigo_seguranca());
+            ps.setInt(2, n.getSenha());
             ps.setDouble(3, n.getSaldo());
             ps.executeUpdate();
 
@@ -162,12 +166,63 @@ public class Create {
                 nakabankId = rs.getInt(1); // Obtém o ID gerado para o Nakabank inserido
             }
 
-            System.out.println("Conta Nakabank cadastrada!");
+            PreparedStatement pst = cn.prepareStatement("UPDATE usuario SET FK_nakabank_id = '" + nakabankId + "' WHERE id = '" + id + "'");
+            pst.executeUpdate();
+
+            JOptionPane.showMessageDialog(null, "Conta NakaBank cadastrada com sucesso!");
             ps.close();
+            pst.close();
             cn.close();
+            Read.getNakabankInforms(nakabankId);
         } catch (SQLException e) {
             throw new Exception("Falha ao acessar base de dados.\n" + e.getMessage());
         }
-        return nakabankId; // Retorna o ID do Nakabank inserido
+    }
+
+    public static void criarPedido() throws Exception {
+        HashMap<JCheckBox, Integer> assentoMap = Tela_selecao_lugar.getAssentoMap(); // Supondo que você tenha um getter para isso
+        SqlConnection conection = new SqlConnection();
+        Connection cn = conection.openDB();
+
+        try {
+            cn.setAutoCommit(false); // Inicia uma transação
+            PreparedStatement ps = cn.prepareStatement("INSERT INTO pedido_novo (valor, pago, FK_assento_id, FK_usuario_id) VALUES (?, ?, ?, ?)");
+            boolean pedidoCriado = false;
+
+            for (Map.Entry<JCheckBox, Integer> entry : assentoMap.entrySet()) {
+                JCheckBox checkBox = entry.getKey();
+                if (checkBox.isSelected() && checkBox.isEnabled()) {
+                    int assentoId = entry.getValue();
+                    double valor = Read.obterValorAssento(assentoId, cn);
+
+                    ps.setDouble(1, valor);
+                    ps.setBoolean(2, false); // Assumindo que o pedido não está pago no momento da criação
+                    ps.setInt(3, assentoId);
+                    ps.setInt(4, Main.getId()); // Supondo que Main.getId() retorna o ID do usuário
+                    ps.executeUpdate();
+
+                    pedidoCriado = true;
+                    break; // Criar apenas um pedido com o primeiro assento selecionado
+                }
+            }
+
+            if (pedidoCriado) {
+                cn.commit(); // Confirma a transação
+                JOptionPane.showMessageDialog(null, "Pedido criado com sucesso!");
+                Tela_apagar_filmes.getjLabel2().setText(String.valueOf(Read.getSaldo(Read.getNakabank(Main.getId()))));
+                Main.getCardLayout().show(Main.getCards(), "pagamento");
+            } else {
+                cn.rollback(); // Desfaz a transação
+                JOptionPane.showMessageDialog(null, "Nenhum assento selecionado.");
+            }
+
+            ps.close();
+        } catch (SQLException e) {
+            cn.rollback(); // Desfaz a transação em caso de erro
+            throw new Exception("Erro ao criar pedido: " + e.getMessage());
+        } finally {
+            cn.setAutoCommit(true); // Restaura o comportamento padrão de commit automático
+            cn.close();
+        }
     }
 }

@@ -1,0 +1,105 @@
+CREATE DATABASE NakaFilms;
+USE NakaFilms;
+
+CREATE TABLE usuario(
+id INTEGER PRIMARY KEY AUTO_INCREMENT,
+cpf VARCHAR(11) NOT NULL,
+rg VARCHAR(9) NOT NULL,
+data_nascimento DATE NOT NULL,
+nome VARCHAR(100) NOT NULL,
+telefone VARCHAR(15),
+e_mail VARCHAR(100) NOT NULL,
+senha VARCHAR(30) NOT NULL,
+FK_nakabank_id INTEGER,
+isAdmin BOOLEAN
+);
+
+INSERT INTO usuario (cpf, rg, data_nascimento, nome, telefone, e_mail, senha, FK_nakabank_id, isAdmin) VALUES (
+'52863742809', '57322321X', '2004-01-10', 'ADM', '(11)99266-1350', 'gabrielattuy1010@gmail.com', '24192197.', null, true);
+
+CREATE TABLE nakabank(
+id INTEGER PRIMARY KEY AUTO_INCREMENT,
+n_conta INTEGER NOT NULL,
+codigo_seguranca INTEGER NOT NULL,
+saldo DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE filme(
+id INTEGER PRIMARY KEY AUTO_INCREMENT,
+foto LONGBLOB NOT NULL,
+nome VARCHAR(100) NOT NULL,
+duracao VARCHAR(10) NOT NULL,
+elenco VARCHAR(200) NOT NULL,
+diretor VARCHAR(50) NOT NULL,
+genero VARCHAR(50) NOT NULL,
+distribuidora VARCHAR(50),
+classificacao VARCHAR(10) NOT NULL,
+sinopse VARCHAR(1000) NOT NULL
+);
+
+CREATE TABLE pedido_novo(
+id INTEGER PRIMARY KEY AUTO_INCREMENT,
+valor DECIMAL(5,2) NOT NULL,
+pago BOOLEAN NOT NULL,
+FK_assento_id INTEGER,
+FK_usuario_id INTEGER
+);
+
+CREATE TABLE sessao(
+id INTEGER PRIMARY KEY AUTO_INCREMENT,
+idioma VARCHAR(3) NOT NULL,
+data_sessao DATE NOT NULL,
+horario TIME NOT NULL,
+FK_filme_id INTEGER,
+sala INTEGER NOT NULL
+);
+
+CREATE TABLE assento(
+id INTEGER PRIMARY KEY AUTO_INCREMENT,
+n_assento INTEGER NOT NULL,
+fileira CHAR NOT NULL,
+status_assento BOOLEAN NOT NULL,
+valor DECIMAL(5,2) NOT NULL,
+FK_sessao_id INTEGER
+);
+
+ALTER TABLE usuario ADD CONSTRAINT FK_usuario_nakabank
+FOREIGN KEY (FK_nakabank_id)
+REFERENCES nakabank (id)
+ON DELETE CASCADE;
+
+ALTER TABLE pedido_novo ADD CONSTRAINT FK_pedido_assento
+FOREIGN KEY (FK_assento_id)
+REFERENCES assento (id)
+ON DELETE CASCADE;
+
+ALTER TABLE pedido_novo ADD CONSTRAINT FK_pedido_usuario
+FOREIGN KEY (FK_usuario_id)
+REFERENCES usuario (id)
+ON DELETE CASCADE;
+
+ALTER TABLE sessao ADD CONSTRAINT FK_sessao_filme
+FOREIGN KEY (FK_filme_id)
+REFERENCES filme (id)
+ON DELETE RESTRICT;
+
+ALTER TABLE assento ADD CONSTRAINT FK_assento_sessao
+FOREIGN KEY (FK_sessao_id)
+REFERENCES sessao (id)
+ON DELETE RESTRICT;
+
+DELIMITER $$
+CREATE TRIGGER update_status_payment_novoo
+AFTER UPDATE ON pedido_novo
+FOR EACH ROW
+BEGIN
+    IF NEW.pago = 1 THEN
+        UPDATE assento
+        SET status_assento = 1
+        WHERE id = NEW.FK_assento_id;
+    END IF;
+END;
+$$
+DELIMITER ;
+
+Alterar a classe SqlConnection com suas credenciais MySQL

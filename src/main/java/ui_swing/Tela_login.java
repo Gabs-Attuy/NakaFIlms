@@ -6,24 +6,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class Tela_login extends JPanel /*implements ActionListener*/{
+public class Tela_login extends JPanel {
     private static JTextField userText;
-    private static JTextField senhaText;
+    private static JPasswordField senhaText;
     private static JButton entrarButton, voltarButton;
 
     public static JButton getEntrarButton() {
         return entrarButton;
     }
 
-    public static JButton getVoltarButton() {
-        return voltarButton;
-    }
-
     public static JTextField getUserText() {
         return userText;
     }
 
-    public static JTextField getSenhaText() {
+    public static JPasswordField getSenhaText() {
         return senhaText;
     }
 
@@ -44,7 +40,7 @@ public class Tela_login extends JPanel /*implements ActionListener*/{
         gbc.gridy = 1;
         JPanel inputPanel = new JPanel(new GridLayout(3, 2, 10, 30));
         inputPanel.setOpaque(false);
-        JLabel user = new JLabel("User:");
+        JLabel user = new JLabel("E-mail:");
         user.setForeground(Color.decode("#F21B7F"));
         inputPanel.add(user);
         userText = new JTextField(20);
@@ -52,7 +48,7 @@ public class Tela_login extends JPanel /*implements ActionListener*/{
         JLabel senha = new JLabel("Senha:");
         senha.setForeground(Color.decode("#F21B7F"));
         inputPanel.add(senha);
-        senhaText = new JTextField(20);
+        senhaText = new JPasswordField(20);
         inputPanel.add(senhaText);
         entrarButton = Metodos_swing.cria_botao("Entrar");
         entrarButton.addActionListener(listener);
@@ -61,6 +57,8 @@ public class Tela_login extends JPanel /*implements ActionListener*/{
         voltarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                getUserText().setText(null);
+                getSenhaText().setText(null);
                 Main.getCardLayout().show(Main.getCards(), "inicio");
             }
         });

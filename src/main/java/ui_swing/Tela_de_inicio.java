@@ -1,22 +1,14 @@
 package ui_swing;
 
+import run_main.Main;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
 public class Tela_de_inicio extends JPanel{
-    private JButton loginButton;
-    private JButton cadastroButton;
 
-    public JButton getLoginButton() {
-        return loginButton;
-    }
-
-    public JButton getCadastroButton() {
-        return cadastroButton;
-    }
-
-    public Tela_de_inicio(ActionListener listener) {
+    public Tela_de_inicio() {
         setBackground(Color.decode("#0D1E40"));
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -31,13 +23,25 @@ public class Tela_de_inicio extends JPanel{
 
         // Adicionando os botões
         gbc.gridy = 1;
-        loginButton = Metodos_swing.cria_botao("Login");
-        loginButton.addActionListener(listener);
+        JButton loginButton = Metodos_swing.cria_botao("Login");
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Main.getCardLayout().show(Main.getCards(), "login");
+                Tela_login.getUserText().requestFocus();
+            }
+        });
         add(loginButton, gbc);
 
         gbc.gridy = 2;
-        cadastroButton = Metodos_swing.cria_botao("Cadastre-se");
-        cadastroButton.addActionListener(listener);
+        JButton cadastroButton = Metodos_swing.cria_botao("Cadastre-se");
+        cadastroButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Main.getCardLayout().show(Main.getCards(), "cadastro");
+                Tela_cadastro_usuario.getNomeText().requestFocus();
+            }
+        });
         add(cadastroButton, gbc);
     }
 }

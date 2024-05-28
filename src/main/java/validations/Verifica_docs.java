@@ -48,26 +48,36 @@ public class Verifica_docs {
         return cpf.charAt(10) - '0' == segundoDigito;
     }
 
-    public static boolean validarRG(String rg) {
-        // Remove caracteres não numéricos do RG e converte "X" para "10"
-        rg = rg.replaceAll("[^0-9X]", "").replace("X", "10");
-
-        // Verifica se o RG tem 9 dígitos
-        if (rg.length() != 9) {
-            return false;
-        }
-
-        // Calcula o dígito verificador
-        int soma = 0;
-        for (int i = 0; i < 8; i++) {
-            soma += (rg.charAt(i) - '0') * (9 - i);
-        }
-        int digito = 11 - (soma % 11);
-        if (digito == 10) {
-            digito = 0; // Se o dígito for 10, considera como 0
-        }
-
-        // Verifica se o dígito verificador calculado é igual ao fornecido
-        return rg.charAt(8) - '0' == digito;
-    }
+//    public static boolean validarRG(String rg) {
+//        // Remove caracteres não numéricos do RG
+//        rg = rg.replaceAll("[^0-9X]", "");
+//
+//        // Verifica se o RG tem 9 dígitos
+//        if (rg.length() != 9) {
+//            return false;
+//        }
+//
+//        // Calcula o dígito verificador
+//        int soma = 0;
+//        for (int i = 0; i < 8; i++) {
+//            soma += (rg.charAt(i) - '0') * (9 - i);
+//        }
+//        int digito = 11 - (soma % 11);
+//        if (digito == 10) {
+//            digito = 0; // Se o dígito for 10, considera como 0
+//        } else if (digito == 11) {
+//            digito = 1; // Se o dígito for 11, considera como 1
+//        }
+//
+//        // Verifica se o dígito verificador calculado é igual ao fornecido
+//        char ultimoCaractere = rg.charAt(8);
+//        int digitoVerificador;
+//        if (ultimoCaractere == 'X') {
+//            digitoVerificador = 10; // Se o último caractere for 'X', considera como 10
+//        } else {
+//            digitoVerificador = ultimoCaractere - '0';
+//        }
+//
+//        return digitoVerificador == digito;
+//    }
 }

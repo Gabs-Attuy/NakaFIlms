@@ -1,9 +1,7 @@
 package run_main;
 
-import Entities.*;
 import sql_actions.*;
 import ui_swing.*;
-import validations.Verifica_docs;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +9,8 @@ import java.awt.event.*;
 
 public class Main extends Component {
 
-    private int id;
+    private static int id;
+    private static boolean isAdin;
     private String user;
     private final JFrame frame;
     private static JPanel cards;
@@ -25,9 +24,21 @@ public class Main extends Component {
     private Tela_cad_sessoes telaCadSessoes;
     private Tela_filme_escolhido telaFilmeEscolhido;
     private Tela_selecao_lugar telaSelecaoLugar;
+    private Tela_nakabank telaNakabank;
+    private Tela_apagar_filmes telaApagarFilmes;
+    private Tela_atualiza_usuario telaAtualizaUsuario;
+    private Tela_principal_adm telaPrincipalAdm;
 
-    public String getUser() {
-        return user;
+    public static void setIsAdin(boolean isAdin) {
+        Main.isAdin = isAdin;
+    }
+
+    public static int getId() {
+        return id;
+    }
+
+    public static void setId(int id) {
+        Main.id = id;
     }
 
     public static CardLayout getCardLayout() {
@@ -49,19 +60,11 @@ public class Main extends Component {
         cards = new JPanel(cardLayout);
 
         // Inicialização das telas
-        telaInicio = new Tela_de_inicio(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (e.getSource() == telaInicio.getLoginButton()) {
-                    cardLayout.show(cards, "login");
-                } else if (e.getSource() == telaInicio.getCadastroButton()) {
-                    cardLayout.show(cards, "cadastro");
-                }
-            }
-        });
+        telaInicio = new Tela_de_inicio();
         telaLogin = new Tela_login(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == Tela_login.getEntrarButton()) {
-                    if(Tela_login.getUserText().getText().isEmpty()){
+                    if (Tela_login.getUserText().getText().isEmpty()) {
                         JOptionPane.showMessageDialog(null, "Campo usuário obrigatório!");
                         Tela_login.getUserText().requestFocus();
                     } else if (Tela_login.getSenhaText().getText().isEmpty()) {
@@ -69,63 +72,43 @@ public class Main extends Component {
                         Tela_login.getSenhaText().requestFocus();
                     } else {
                         try {
-                            id = Read.getUserId(Tela_login.getUserText().getText(), Tela_login.getSenhaText().getText());
+                            Read.getUserId(Tela_login.getUserText().getText(), Tela_login.getSenhaText().getText());
+                            int id = Main.getId(); // Recupera o ID do usuário
                             if (id != -1) {
-                                user = Read.getNome(id);
+                                String user = Read.getNome(id);
                                 assert user != null;
-//                                Tela_principal.getNomeUser().setText("Olá " + user.split(" ")[0]);
                                 JOptionPane.showMessageDialog(null, "Bem-vindo " + user + "!");
-                                Read.getFilmeCartaz();
-                                cardLayout.show(cards, "menu_principal");
+                                if (isAdin) {
+                                    clearFields();
+                                    cardLayout.show(cards, "adm");
+                                } else {
+                                    Read.getFilmeCartaz();
+                                    clearFields();
+                                    cardLayout.show(cards, "menu_principal");
+                                }
                             } else {
                                 JOptionPane.showMessageDialog(null, "Usuário não encontrado!");
+                                clearFields();
+                                Tela_login.getUserText().requestFocus();
                             }
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            JOptionPane.showMessageDialog(null, "Erro ao efetuar login: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                            clearFields();
                         }
                     }
                 }
             }
         });
-        telaCadastro = new Tela_cadastro_usuario(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (e.getSource() == Tela_cadastro_usuario.getCadastrarButton()) {
-                    String cpfSemPontuacao = Tela_cadastro_usuario.getCpfText().getText().replaceAll("\\D", "");
-                    String rgSemPontuacao = Tela_cadastro_usuario.getRgText().getText().replaceAll("\\D", "");
-                    if(Tela_cadastro_usuario.getCpfText().getText().isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "Campo CPF obrigatório!");
-                        Tela_cadastro_usuario.getCpfText().requestFocus();
-                    } else if (!Verifica_docs.validarCPF(cpfSemPontuacao)) {
-                        JOptionPane.showMessageDialog(null, "CPF inválido!");
-                        Tela_cadastro_usuario.getCpfText().setText("");
-                        Tela_cadastro_usuario.getCpfText().requestFocus();
-                    } else if (Tela_cadastro_usuario.getRgText().getText().isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "Campo RG obrigatório!");
-                        Tela_cadastro_usuario.getRgText().requestFocus();
-                    } else if (!Verifica_docs.validarRG(rgSemPontuacao)) {
-                        JOptionPane.showMessageDialog(null, "RG inválido!");
-                        Tela_cadastro_usuario.getRgText().setText("");
-                        Tela_cadastro_usuario.getRgText().requestFocus();
-                    }
-
-                    Usuario u = new Usuario(Tela_cadastro_usuario.getNomeText().getText(), cpfSemPontuacao, rgSemPontuacao, Tela_cadastro_usuario.getTelefoneText().getText(), Tela_cadastro_usuario.getEmailText().getText(), Tela_cadastro_usuario.getSenhaText().getText());
-                    u.setData_de_nascimento(u.transformaDataSQL(Tela_cadastro_usuario.getDataText().getText()));
-                    try {
-                        Create.Cad_user(u);
-                        cardLayout.show(cards, "login");
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                } else if (e.getSource() == Tela_cadastro_usuario.getVoltarButton()) {
-                    cardLayout.show(cards, "inicio");
-                }
-            }
-        });
+        telaCadastro = new Tela_cadastro_usuario();
         telaPrincipal = new Tela_principal();
         telaCadFilme = new Tela_cadastro_filme();
         telaCadSessoes = new Tela_cad_sessoes();
         telaFilmeEscolhido = new Tela_filme_escolhido();
         telaSelecaoLugar = new Tela_selecao_lugar();
+        telaNakabank = new Tela_nakabank();
+        telaApagarFilmes = new Tela_apagar_filmes();
+        telaAtualizaUsuario = new Tela_atualiza_usuario();
+        telaPrincipalAdm = new Tela_principal_adm();
 
         // Adicionando as telas ao CardLayout
         cards.add(telaInicio, "inicio");
@@ -136,10 +119,18 @@ public class Main extends Component {
         cards.add(telaCadSessoes, "cad_sessao");
         cards.add(telaFilmeEscolhido, "filme_escolhido");
         cards.add(telaSelecaoLugar, "selecao_lugar");
+        cards.add(telaNakabank, "nakabank");
+        cards.add(telaApagarFilmes, "pagamento");
+        cards.add(telaAtualizaUsuario, "atualiza_user");
+        cards.add(telaPrincipalAdm, "adm");
         frame.add(cards);
         frame.setVisible(true);
     }
 
+    private static void clearFields(){
+        Tela_login.getUserText().setText(null);
+        Tela_login.getSenhaText().setText(null);
+    }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(Main::new);
     }

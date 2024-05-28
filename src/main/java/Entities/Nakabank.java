@@ -1,7 +1,7 @@
 package Entities;
 
 public class Nakabank {
-    private Integer n_conta, codigo_seguranca;
+    private Integer n_conta, senha;
     private double saldo;
 
     public Integer getN_conta() {
@@ -12,12 +12,12 @@ public class Nakabank {
         this.n_conta = n_conta;
     }
 
-    public Integer getCodigo_seguranca() {
-        return codigo_seguranca;
+    public Integer getSenha() {
+        return senha;
     }
 
-    public void setCodigo_seguranca(Integer codigo_seguranca) {
-        this.codigo_seguranca = codigo_seguranca;
+    public void setSenha(Integer senha) {
+        this.senha = senha;
     }
 
     public double getSaldo() {
@@ -28,21 +28,9 @@ public class Nakabank {
         this.saldo = saldo;
     }
 
-    public Nakabank(Integer n_conta, Integer codigo_seguranca, double saldo) {
+    public Nakabank(Integer n_conta, Integer senha, double saldo) {
         this.n_conta = n_conta;
-        this.codigo_seguranca = codigo_seguranca;
+        this.senha = senha;
         this.saldo = saldo;
-    }
-
-    public void transferencia(Integer cod_destino, double valor){
-
-    }
-
-    public void deposito(double valor){
-        this.saldo += valor;
-    }
-
-    public void pagamento(double valor_pedido, Integer cod_adm){
-
     }
 }

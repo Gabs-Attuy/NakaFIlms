@@ -5,18 +5,18 @@ import sql_actions.Read;
 import java.util.Date;
 import java.util.regex.*;
 public class Verifica_idade {
-    public static boolean verifica(int id) throws Exception {
+    public static boolean verifica(int id, int id_filmee) throws Exception {
         Date data = data(id);
         int idade = calcularIdade(data);
-        int classificacao = classificacao();
+        int classificacao = classificacao(id_filmee);
         if(classificacao == -1)
             return true;
         else {
             return idade >= classificacao;
         }
     }
-    public static int classificacao() throws Exception {
-        String idadeString = Read.getClassificacao(2);
+    public static int classificacao(int id_filmee) throws Exception {
+        String idadeString = Read.getClassificacao(id_filmee);
 
         // Use uma expressão regular para encontrar o número na string
         String numeroRegex = "\\d+";

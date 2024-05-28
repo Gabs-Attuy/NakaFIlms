@@ -1,14 +1,19 @@
 package ui_swing;
 
+import Entities.Usuario;
+import run_main.Main;
+import sql_actions.Create;
+import validations.Verifica_docs;
+
 import javax.swing.*;
 import javax.swing.text.MaskFormatter;
 import java.awt.*;
 import java.awt.event.*;
 
 public class Tela_cadastro_usuario extends JPanel implements ActionListener {
-    private static JTextField nomeText, emailText, senhaText, confirmaSenhaText;
+    private static JTextField nomeText, emailText;
+    private static JPasswordField senhaText, confirmaSenhaText;
     private static JFormattedTextField cpfText, rgText, telefoneText, dataText;
-    private static JButton cadastrarButton, voltarButton;
 
     public static JTextField getNomeText() {
         return nomeText;
@@ -18,11 +23,11 @@ public class Tela_cadastro_usuario extends JPanel implements ActionListener {
         return emailText;
     }
 
-    public static JTextField getSenhaText() {
+    public static JPasswordField getSenhaText() {
         return senhaText;
     }
 
-    public JTextField getConfirmaSenhaText() {
+    public static JPasswordField getConfirmaSenhaText() {
         return confirmaSenhaText;
     }
 
@@ -42,15 +47,7 @@ public class Tela_cadastro_usuario extends JPanel implements ActionListener {
         return dataText;
     }
 
-    public static JButton getCadastrarButton() {
-        return cadastrarButton;
-    }
-
-    public static JButton getVoltarButton() {
-        return voltarButton;
-    }
-
-    public Tela_cadastro_usuario(ActionListener listener) {
+    public Tela_cadastro_usuario() {
         setBackground(Color.decode("#0D1E40"));
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -75,22 +72,22 @@ public class Tela_cadastro_usuario extends JPanel implements ActionListener {
         JLabel data_nascimento = new JLabel("Data de Nascimento (Ano-Mês-Dia):");
         data_nascimento.setForeground(Color.decode("#F21B7F"));
         inputPanel.add(data_nascimento);
-        dataText = criarCaixaTextoFormatada("####-##-##");
+        dataText = Metodos_swing.criarCaixaTextoFormatada("####-##-##");
         inputPanel.add(dataText);
         JLabel cpf = new JLabel("CPF:");
         cpf.setForeground(Color.decode("#F21B7F"));
         inputPanel.add(cpf);
-        cpfText = criarCaixaTextoFormatada("###.###.###-##");
+        cpfText = Metodos_swing.criarCaixaTextoFormatada("###.###.###-##");
         inputPanel.add(cpfText);
         JLabel rg = new JLabel("RG:");
         rg.setForeground(Color.decode("#F21B7F"));
         inputPanel.add(rg);
-        rgText = criarCaixaTextoFormatada("##.###.###-A");
+        rgText = Metodos_swing.criarCaixaTextoFormatada("##.###.###-A");
         inputPanel.add(rgText);
         JLabel telefone = new JLabel("Telefone:");
         telefone.setForeground(Color.decode("#F21B7F"));
         inputPanel.add(telefone);
-        telefoneText = criarCaixaTextoFormatada("(##)#####-####");
+        telefoneText = Metodos_swing.criarCaixaTextoFormatada("(##)#####-####");
         inputPanel.add(telefoneText);
         JLabel email = new JLabel("E-mail:");
         email.setForeground(Color.decode("#F21B7F"));
@@ -100,33 +97,103 @@ public class Tela_cadastro_usuario extends JPanel implements ActionListener {
         JLabel senha = new JLabel("Senha:");
         senha.setForeground(Color.decode("#F21B7F"));
         inputPanel.add(senha);
-        senhaText = new JTextField(20);
+        senhaText = new JPasswordField(20);
         inputPanel.add(senhaText);
         JLabel confirmaSenha = new JLabel("Confirma Senha:");
         confirmaSenha.setForeground(Color.decode("#F21B7F"));
         inputPanel.add(confirmaSenha);
-        confirmaSenhaText = new JTextField(20);
+        confirmaSenhaText = new JPasswordField(20);
         inputPanel.add(confirmaSenhaText);
-        cadastrarButton = Metodos_swing.cria_botao("Cadastrar");
-        cadastrarButton.addActionListener(listener);
+        JButton cadastrarButton = Metodos_swing.cria_botao("Cadastrar");
+        cadastrarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String cpfSemPontuacao = getCpfText().getText().replaceAll("\\D", "");
+                String rgSemPontuacao = getRgText().getText().replaceAll("\\D", "");
+                if(getCpfText().getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Campo CPF obrigatório!");
+                    getCpfText().requestFocus();
+                    return;
+                } else if (!Verifica_docs.validarCPF(cpfSemPontuacao)) {
+                    JOptionPane.showMessageDialog(null, "CPF inválido!");
+                    getCpfText().setText("");
+                    getCpfText().requestFocus();
+                    return;
+                } else if (getRgText().getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Campo RG obrigatório!");
+                    getRgText().requestFocus();
+                    return;
+                } /*else if (!Verifica_docs.validarRG(rgSemPontuacao)) {
+                    JOptionPane.showMessageDialog(null, "RG inválido!");
+                    getRgText().setText("");
+                    getRgText().requestFocus();
+                    return;
+                }*/ else if (getNomeText().getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Campo Nome obrigatório!");
+                    getNomeText().requestFocus();
+                    return;
+                } else if (getDataText().getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Campo Data de Nascimento obrigatório");
+                    getDataText().requestFocus();
+                    return;
+                } else if (getTelefoneText().getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Campo Telefone obrigatório!");
+                    getTelefoneText().requestFocus();
+                    return;
+                } else if (getEmailText().getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Campo E-mail obrigatório!");
+                    getEmailText().requestFocus();
+                    return;
+                } else if (getSenhaText().getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Campo Senha obrigatório!");
+                    getSenhaText().requestFocus();
+                    return;
+                } else if (getConfirmaSenhaText().getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Campo Confirma Senha obrigatório!");
+                    getConfirmaSenhaText().requestFocus();
+                    return;
+                } else if(!getSenhaText().getText().equals(getConfirmaSenhaText().getText())) {
+                    JOptionPane.showMessageDialog(null, "Confirmação de senha inválida!");
+                    getSenhaText().setText(null);
+                    getConfirmaSenhaText().setText(null);
+                    getSenhaText().requestFocus();
+                    return;
+                }
+                    Usuario u = new Usuario(getNomeText().getText(), cpfSemPontuacao, rgSemPontuacao, getTelefoneText().getText(), getEmailText().getText(), getSenhaText().getText());
+                    u.setData_de_nascimento(u.transformaDataSQL(getDataText().getText()));
+                    try {
+                        Create.Cad_user(u);
+                        clearFields();
+                        Main.getCardLayout().show(Main.getCards(), "login");
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Erro ao cadastrar usuário: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                        clearFields();
+                        getNomeText().requestFocus();
+                    }
+            }
+        });
         inputPanel.add(cadastrarButton);
-        voltarButton = Metodos_swing.cria_botao("Voltar");
-        voltarButton.addActionListener(listener);
+        JButton voltarButton = Metodos_swing.cria_botao("Voltar");
+        voltarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearFields();
+                Main.getCardLayout().show(Main.getCards(), "inicio");
+            }
+        });
         inputPanel.add(voltarButton);
         add(inputPanel, gbc);
     }
 
-    private MaskFormatter setMascara(String mascara){
-        MaskFormatter mask = null;
-            try{
-                mask = new MaskFormatter(mascara);
-            }catch(java.text.ParseException ex){}
-        return mask;
-    }
-    private JFormattedTextField criarCaixaTextoFormatada(String mascara) {
-        JFormattedTextField texto = new JFormattedTextField(setMascara(mascara));
-        texto.addActionListener(this);
-        return texto;
+    private static void clearFields() {
+        getNomeText().setText(null);
+        getDataText().setText(null);
+        getCpfText().setText(null);
+        getRgText().setText(null);
+        getTelefoneText().setText(null);
+        getEmailText().setText(null);
+        getSenhaText().setText(null);
+        getConfirmaSenhaText().setText(null);
     }
 
     @Override
